@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from tkinter import messagebox
-from config import salvar_config, api_key_configurada
+from infra.config import salvar_config, api_key_configurada
 
 ROXO_ESCURO  = "#1e0a3c"
 ROXO_MEDIO   = "#3b1f6e"
