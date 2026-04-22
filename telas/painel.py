@@ -32,29 +32,33 @@ class PainelFrame(ctk.CTkFrame):
 
         # Cards
         frame_cards = ctk.CTkFrame(self, fg_color="transparent")
-        frame_cards.pack(fill="x", padx=32)
+        frame_cards.pack(fill="x", padx=32, pady=(0, 8))
 
         dados_cards = [
-            ("Total de Gastos",   "total_gastos",     "#e74c3c", "📉"),
-            ("Total de Receitas", "total_receitas",   "#1d9e75", "📈"),
-            ("Saldo do Período",  "saldo",            "#7c3aed", "💰"),
-            ("Dívidas Pendentes", "dividas_pendentes","#e67e22", "⚠️"),
+            ("Gastos do mês",    "total_gastos",     "#e74c3c", "📉"),  
+            ("Receitas do mês",  "total_receitas",   "#1d9e75", "📈"),  
+            ("Saldo do mês",     "saldo",            "#7c3aed", "💰"), 
+            ("Dívidas Pendentes","dividas_pendentes","#e67e22", "⚠️"),
         ]
 
         self.labels_cards = {}
         for i, (titulo, chave, cor, icone) in enumerate(dados_cards):
+            frame_cards.columnconfigure(i, weight=1)
             card = ctk.CTkFrame(frame_cards, fg_color=CARD_BG,
                                 corner_radius=16, border_width=1,
                                 border_color=ROXO_MEDIO)
             card.grid(row=0, column=i, padx=10, pady=8, sticky="nsew")
-            frame_cards.columnconfigure(i, weight=1)
-            ctk.CTkLabel(card, text=icone, font=ctk.CTkFont(size=28)).pack(pady=(18, 4))
-            ctk.CTkLabel(card, text=titulo, font=ctk.CTkFont(size=11),
-                         text_color=TEXTO_MUTED).pack()
+            card.columnconfigure(0, weight=1)
+
+            ctk.CTkLabel(card, text=icone,
+                        font=ctk.CTkFont(size=28)).pack(pady=(18, 4))
+            ctk.CTkLabel(card, text=titulo,
+                        font=ctk.CTkFont(size=11),
+                        text_color=TEXTO_MUTED).pack(fill="x", padx=8)
             lbl = ctk.CTkLabel(card, text="R$ 0,00",
-                               font=ctk.CTkFont(size=20, weight="bold"),
-                               text_color=TEXTO)
-            lbl.pack(pady=(4, 18))
+                            font=ctk.CTkFont(size=20, weight="bold"),
+                            text_color=TEXTO)
+            lbl.pack(pady=(4, 18), fill="x", padx=8)
             self.labels_cards[chave] = lbl
 
         ctk.CTkButton(self, text="Atualizar",
@@ -65,39 +69,43 @@ class PainelFrame(ctk.CTkFrame):
 
         # Meta mensal
         frame_meta = ctk.CTkFrame(self, fg_color=CARD_BG, corner_radius=16,
-                                  border_width=1, border_color=ROXO_MEDIO)
+                                border_width=1, border_color=ROXO_MEDIO)
         frame_meta.pack(fill="x", padx=32, pady=(0, 8))
+        frame_meta.columnconfigure(1, weight=1)
 
         ctk.CTkLabel(frame_meta, text="Meta de economia mensal",
-                     font=ctk.CTkFont(size=13, weight="bold"),
-                     text_color=VIOLETA).grid(row=0, column=0, padx=20, pady=(16, 4), sticky="w")
+                    font=ctk.CTkFont(size=13, weight="bold"),
+                    text_color=VIOLETA
+                    ).grid(row=0, column=0, columnspan=2,
+                            padx=20, pady=(16, 4), sticky="w")
 
-        frame_meta_input = ctk.CTkFrame(frame_meta, fg_color="transparent")
-        frame_meta_input.grid(row=1, column=0, padx=20, pady=(0, 8), sticky="w")
+        self.entry_meta = ctk.CTkEntry(
+            frame_meta, placeholder_text="Ex: 1500.00",
+            height=36, corner_radius=8,
+            fg_color=ROXO_ESCURO, text_color=TEXTO,
+            border_color=ROXO_CLARO)
+        self.entry_meta.grid(row=1, column=0, sticky="ew",
+                            padx=(20, 8), pady=(0, 8))
 
-        self.entry_meta = ctk.CTkEntry(frame_meta_input,
-                                       placeholder_text="Ex: 1500.00",
-                                       width=200, height=36, corner_radius=8,
-                                       fg_color=ROXO_ESCURO, text_color=TEXTO,
-                                       border_color=ROXO_CLARO)
-        self.entry_meta.pack(side="left", padx=(0, 12))
+        ctk.CTkButton(frame_meta, text="Salvar Meta",
+                    command=self._salvar_meta,
+                    fg_color=ROXO_CLARO, hover_color=ROXO_MEDIO,
+                    text_color=TEXTO, corner_radius=8,
+                    width=130, height=36
+                    ).grid(row=1, column=1, sticky="w", padx=(0, 20), pady=(0, 8))
 
-        ctk.CTkButton(frame_meta_input, text="Salvar Meta",
-                      command=self._salvar_meta,
-                      fg_color=ROXO_CLARO, hover_color=ROXO_MEDIO,
-                      text_color=TEXTO, corner_radius=8,
-                      width=120, height=36).pack(side="left")
+        self.label_meta_status = ctk.CTkLabel(
+            frame_meta, text="Meta não definida",
+            font=ctk.CTkFont(size=11), text_color=TEXTO_MUTED)
+        self.label_meta_status.grid(row=2, column=0, columnspan=2,
+                                    padx=20, sticky="w")
 
-        self.label_meta_status = ctk.CTkLabel(frame_meta, text="Meta não definida",
-                                              font=ctk.CTkFont(size=11),
-                                              text_color=TEXTO_MUTED)
-        self.label_meta_status.grid(row=2, column=0, padx=20, sticky="w")
-
-        self.barra_meta = ctk.CTkProgressBar(frame_meta, width=500, height=14,
-                                             corner_radius=8, fg_color=ROXO_MEDIO,
-                                             progress_color=ROXO_CLARO)
+        self.barra_meta = ctk.CTkProgressBar(
+            frame_meta, height=14, corner_radius=8,
+            fg_color=ROXO_MEDIO, progress_color=ROXO_CLARO)
         self.barra_meta.set(0)
-        self.barra_meta.grid(row=3, column=0, padx=20, pady=(4, 16), sticky="w")
+        self.barra_meta.grid(row=3, column=0, columnspan=2,
+                            padx=20, pady=(4, 16), sticky="ew")
 
     def atualizar(self):
         r = resumo_financeiro()

@@ -4,7 +4,8 @@ matplotlib.use("TkAgg")
 from dados import inicializar_arquivo
 from config import api_key_configurada
 from onboarding import TelaOnboarding
-from telas import PainelFrame, GastosFrame, ReceitasFrame, DividasFrame, GraficosFrame, IAFrame
+from telas import (PainelFrame, GastosFrame, ReceitasFrame,
+                   DividasFrame, GraficosFrame, IAFrame, InvestimentosFrame)
 
 inicializar_arquivo()
 ctk.set_appearance_mode("dark")
@@ -48,12 +49,13 @@ class AppFinanceiro(ctk.CTk):
 
         self.botoes_nav = {}
         itens = [
-            ("painel",   "  Painel"),
-            ("gastos",   "  Gastos"),
-            ("receitas", "  Receitas"),
-            ("dividas",  "  Dívidas"),
-            ("graficos", "  Gráficos"),
-            ("ia",       "  Assistente IA"),
+            ("painel",        "  Painel"),
+            ("gastos",        "  Gastos"),
+            ("receitas",      "  Receitas"),
+            ("investimentos", "  Investimentos"),
+            ("dividas",       "  Dívidas"),
+            ("graficos",      "  Gráficos"),
+            ("ia",            "  Assistente IA"),
         ]
         for chave, texto in itens:
             btn = ctk.CTkButton(
@@ -83,12 +85,13 @@ class AppFinanceiro(ctk.CTk):
         container.pack(side="left", fill="both", expand=True)
 
         self.telas = {
-            "painel":   PainelFrame(container),
-            "gastos":   GastosFrame(container),
-            "receitas": ReceitasFrame(container),
-            "dividas":  DividasFrame(container),
-            "graficos": GraficosFrame(container),
-            "ia":       IAFrame(container),
+            "painel":        PainelFrame(container),
+            "gastos":        GastosFrame(container),
+            "receitas":      ReceitasFrame(container),
+            "investimentos": InvestimentosFrame(container),
+            "dividas":       DividasFrame(container),
+            "graficos":      GraficosFrame(container),
+            "ia":            IAFrame(container),
         }
         for tela in self.telas.values():
             tela.place(relx=0, rely=0, relwidth=1, relheight=1)
@@ -104,6 +107,7 @@ class AppFinanceiro(ctk.CTk):
         self.telas["painel"].atualizar()
         self.telas["gastos"].atualizar()
         self.telas["receitas"].atualizar()
+        self.telas["investimentos"].atualizar()
         self.telas["dividas"].atualizar()
         self.telas["graficos"].atualizar()
 

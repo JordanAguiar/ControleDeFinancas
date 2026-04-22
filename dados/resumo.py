@@ -6,28 +6,52 @@ from .conexao import abrir, ARQUIVO
 
 
 def resumo_financeiro():
+    from datetime import datetime
+    from .gastos   import listar_gastos
+    from .receitas import listar_receitas
+    from .dividas  import listar_dividas
+
     gastos   = listar_gastos()
     dividas  = listar_dividas()
     receitas = listar_receitas()
 
-    total_gastos   = sum(g["valor"] for g in gastos   if g["valor"])
-    total_receitas = sum(r["valor"] for r in receitas if r["valor"])
-    total_dividas  = sum(d["valor_total"] for d in dividas if d["valor_total"])
-    pendentes      = sum(
+    hoje = datetime.now()
+
+    # Apenas mês atual
+    gastos_mes = sum(
+        g["valor"] for g in gastos
+        if g["valor"] and _mesmo_mes(g["data"], hoje)
+    )
+    receitas_mes = sum(
+        r["valor"] for r in receitas
+        if r["valor"] and _mesmo_mes(r["data"], hoje)
+    )
+
+    total_dividas = sum(d["valor_total"] for d in dividas if d["valor_total"])
+    pendentes     = sum(
         d["valor_total"] - d["valor_pago"]
         for d in dividas if d["status"] == "Pendente"
     )
 
     return {
-        "total_gastos":      total_gastos,
-        "total_receitas":    total_receitas,
+        "total_gastos":      gastos_mes,
+        "total_receitas":    receitas_mes,
         "total_dividas":     total_dividas,
         "dividas_pendentes": pendentes,
-        "saldo":             total_receitas - total_gastos,
+        "saldo":             receitas_mes - gastos_mes,
         "qtd_gastos":        len(gastos),
         "qtd_dividas":       len(dividas),
         "qtd_receitas":      len(receitas),
     }
+
+
+def _mesmo_mes(data_str, hoje):
+    from datetime import datetime
+    try:
+        dt = datetime.strptime(data_str, "%d/%m/%Y")
+        return dt.month == hoje.month and dt.year == hoje.year
+    except (ValueError, TypeError):
+        return False
 
 
 def salvar_meta(valor_meta):

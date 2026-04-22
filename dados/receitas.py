@@ -2,11 +2,13 @@ from datetime import datetime
 from .conexao import abrir, ARQUIVO
 
 
-def adicionar_receita(descricao, categoria, valor):
+def adicionar_receita(descricao, categoria, valor, data=None):
     wb = abrir()
+    data = data or datetime.now().strftime("%d/%m/%Y")
     if "Receitas" not in wb.sheetnames:
-        wb.create_sheet("Receitas").append(["Data", "Descrição", "Categoria", "Valor (R$)"])
-    wb["Receitas"].append([datetime.now().strftime("%d/%m/%Y"), descricao, categoria, float(valor)])
+        wb.create_sheet("Receitas").append(
+            ["Data", "Descrição", "Categoria", "Valor (R$)"])
+    wb["Receitas"].append([data, descricao, categoria, float(valor)])
     wb.save(ARQUIVO)
 
 
