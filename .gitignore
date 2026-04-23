@@ -3,3 +3,5 @@ venv/
 financeiro.xlsx
 __pycache__/
 *.pyc
+*.spec
+dist/
